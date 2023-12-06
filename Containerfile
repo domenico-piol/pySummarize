@@ -2,9 +2,9 @@ FROM python:3.11-slim
 
 ENV PYTHONUNBUFFERED True
 
-RUN pip install torch transformers flask
+RUN pip install torch transformers flask pyopenssl
 
 ADD fb-bart-large-cnn fb-bart-large-cnn/
 ADD summarize.py summarize.py
 
-ENTRYPOINT [ "flask", "--app", "summarize", "run", "--host=0.0.0.0"]
+ENTRYPOINT [ "python", "summarize.py"]

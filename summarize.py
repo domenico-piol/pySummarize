@@ -6,6 +6,7 @@ from flask import Flask, request, jsonify
 app = Flask(__name__)
 app.logger.setLevel(logging.INFO)
 
+
 @app.route('/')
 def show_complaints_page():    
     app.logger.info('Summarizer application root called')
@@ -14,7 +15,7 @@ def show_complaints_page():
     htmlPageFooter = "</body></html>"
 
     return htmlPageHeader + htmlPageContent + htmlPageFooter, 200
-
+    
 
 @app.route('/summarize/', methods=['GET'])
 @app.route('/summarize/<article>', methods=['GET'])
@@ -35,3 +36,5 @@ def get_summarization(article=""):
         app.logger.error('an error occurred')
         return "No summarization was possible", 500
         
+
+app.run(host="0.0.0.0", port=5443, ssl_context="adhoc")
