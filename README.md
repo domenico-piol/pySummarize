@@ -29,3 +29,19 @@ Run the container in Podman:
     podman run --name pysummarize -it -d -p 443:5443 mydomain/pysummarize
 
 or in OpenShift by using the deployment descriptor in th e`k8s`folder.`
+
+## Example
+Let's take an announcement made by Red Hat some time back:
+
+> In the evolving landscape of hybrid cloud infrastructure, organizations are confronting the complexities of deploying and managing applications across various regions and zones due to latency, availability, compliance, sovereignty, and security concerns. As demand for multitenancy and specialized workload management grows, the limitations of single-cluster setups become evident, pushing businesses towards a multicluster approach. 
+>
+>As organizations navigate this shift, they encounter the daunting task of orchestrating and administering multiple clusters efficiently. The need for a cost-effective, scalable, and holistic multicluster Red Hat OpenShift architecture arises as a business priority to maintain a competitive edge and build innovative applications. Recognizing this, a year ago, we introduced a technology preview of hosted control planes for OpenShift, tailored for efficient multicluster deployments. Hosted control planes, which architecturally decouples the control plane from workloads, presents a scalable and economical solution for multicluster management. It helps streamline cluster provisioning and improves resource allocation by leveraging existing OpenShift management infrastructure and tooling. 
+>
+>After a year of valuable feedback from our customers and partners, we are happy to announce that hosted control planes for Red Hat OpenShift is now generally available on two critical on-premises platforms: Baremetal via the agent provider and the Red Hat OpenShift Virtualization provider, marking our first milestone in a long and exciting journey.
+
+The output is then something like:
+
+    {
+        "summary_text":
+            "Hosted control planes for Red Hat OpenShift is now generally available on two critical on-premises platforms. It helps streamline cluster provisioning and improves resource allocation by leveraging existing OpenShift management infrastructure."
+    }
