@@ -1,0 +1,23 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  name: pysummarize-pipeline-run
+spec:
+  pipelineRef:
+    name: pysummarize-pipeline
+  workspaces:
+    - name: shared-workspace
+      persistentvolumeclaim:
+        claimName: pysummarize-source-pvc
+    - name: dockerconfig-ws
+      secret:
+        secretName: dockerconfig-secret
+  params:
+    - name: repo-url
+      value: https://github.com/domenico-piol/pySummarize
+    - name: repo-branch
+      value: main
+    - name: container-repo
+      value: registry-1.docker.io/domenicopiol
+    - name: container-registry
+      value: docker.io

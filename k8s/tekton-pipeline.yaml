@@ -1,0 +1,99 @@
+
+
+apiVersion: tekton.dev/v1
+kind: Pipeline
+metadata:
+  name: pysummarize-pipeline
+spec:
+  description: | 
+    This pipeline builds the pySummarize application container
+  params:
+    - name: repo-url
+      type: string
+      description: The git repo URL to clone from.
+    - name: container-repo
+      type: string
+      description: The container repo URL to be used.
+    - name: container-registry
+      type: string
+      description: The container registry (e.g. docker.io)
+    - name: repo-branch
+      type: string
+      description: The branch to be used.
+  workspaces:
+    - name: shared-workspace
+    - name: dockerconfig-ws
+      optional: true
+  tasks:
+    - name: fetch-repository
+      taskRef:
+        name: git-clone
+      workspaces:
+        - name: output
+          workspace: shared-workspace
+      params:
+        - name: url
+          value: $(params.repo-url)
+        - name: revision
+          value: $(params.repo-branch)
+        - name: deleteExisting
+          value: "true"
+    - name: buildah
+      taskRef:
+        name: buildah
+      runAfter:
+        - fetch-repository
+      params:
+        - name: DOCKERFILE
+          value: ./Containerfile
+        #- name: CONTEXT
+        #  value: ui
+        - name: IMAGE
+          value: $(params.container-repo)/pysummarize:$(context.pipelineRun.uid)
+      workspaces:
+        - name: source
+          workspace: shared-workspace
+        - name: dockerconfig
+          workspace: dockerconfig-ws
+    - name: ui-skopeo-copy
+      taskRef:
+        name: dpiol-skopeo-copy
+      runAfter:
+        - buildah
+      params:
+        - name: srcImageURL
+          value: docker://$(params.container-repo)/pysummarize:$(context.pipelineRun.uid)
+        - name: destImageURL
+          value: docker://$(params.container-repo)/pysummarize:latest
+        - name: srcTLSverify
+          value: 'false'
+        - name: destTLSverify
+          value: 'false'
+        - name: credentials
+          value: dockerio-creds-username
+        - name: containerRegistry
+          value: $(params.container-registry)
+      workspaces:
+        - name: images-url
+          workspace: shared-workspace
+  finally:
+    - name: print-buildinfo
+      taskRef: 
+        name: build-info
+      params:
+        - name: buildID
+          value: $(context.pipelineRun.uid)
+#
+# CAN BE USED FOR DEBUGGING
+#    - name: list-dir
+#      taskRef:
+#        name: list-directory
+#      runAfter:
+#        - fetch-repository
+#      params:
+#        - name: sub-dirs
+#          value:
+#            - .
+#      workspaces:
+#        - name: directory
+#          workspace: dockerconfig-ws

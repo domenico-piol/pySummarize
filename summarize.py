@@ -12,6 +12,9 @@ def show_complaints_page():
     app.logger.info('Summarizer application root called')
     htmlPageHeader = "<!DOCTYPE html><html><body>"
     htmlPageContent = "<h1>Welcome to our complaints summarizer</h1>"
+    htmlPageContent += "<p>"
+    htmlPageContent += "You can use this summarization model by calling:" + "</p>"
+    htmlPageContent += "<code>https://{URL}}:443/summarize/'ARTICLE TO SUMMARIZE'<code>"
     htmlPageFooter = "</body></html>"
 
     return htmlPageHeader + htmlPageContent + htmlPageFooter, 200
