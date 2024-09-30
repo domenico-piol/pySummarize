@@ -1,11 +1,9 @@
-
-
 apiVersion: tekton.dev/v1
 kind: Pipeline
 metadata:
   name: pysummarize-pipeline
 spec:
-  description: | 
+  description: |
     This pipeline builds the pySummarize application container
   params:
     - name: repo-url
@@ -46,8 +44,6 @@ spec:
       params:
         - name: DOCKERFILE
           value: ./Containerfile
-        #- name: CONTEXT
-        #  value: ui
         - name: IMAGE
           value: $(params.container-repo)/pysummarize:$(context.pipelineRun.uid)
       workspaces:
@@ -66,9 +62,9 @@ spec:
         - name: destImageURL
           value: docker://$(params.container-repo)/pysummarize:latest
         - name: srcTLSverify
-          value: 'false'
+          value: "false"
         - name: destTLSverify
-          value: 'false'
+          value: "false"
         - name: credentials
           value: dockerio-creds-username
         - name: containerRegistry
@@ -78,11 +74,21 @@ spec:
           workspace: shared-workspace
   finally:
     - name: print-buildinfo
-      taskRef: 
+      taskRef:
         name: build-info
       params:
         - name: buildID
           value: $(context.pipelineRun.uid)
+    #- name: list-dir
+    #  taskRef:
+    #    name: list-directory
+    #  params:
+    #    - name: sub-dirs
+    #      value:
+    #        - ./fb-bart-large-cnn/
+    #  workspaces:
+    #    - name: directory
+    #      workspace: shared-workspace
 #
 # CAN BE USED FOR DEBUGGING
 #    - name: list-dir

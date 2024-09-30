@@ -13,12 +13,30 @@ spec:
       labels:
         app: pysummarize
     spec:
+      initContainers:
+        - name: hf-model-dl
+          image: docker.io/domenicopiol/hf-model-dl:latest
+          command:
+            [
+              "sh",
+              "-c",
+              "./dl.sh -m facebook/bart-large-cnn -d /opt/bart-large-cnn -f 'pytorch_model.bin tokenizer.json vocab.json config.json merges.txt'",
+            ]
+          volumeMounts:
+            - name: modeldir
+              mountPath: /opt/bart-large-cnn
       containers:
-      - name: pysummarize
-        image: docker.io/domenicopiol/pysummarize:v0.8.2
-        imagePullPolicy: Always
-        ports:
-        - containerPort: 5443
+        - name: pysummarize
+          image: docker.io/domenicopiol/pysummarize:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 5443
+          volumeMounts:
+            - name: modeldir
+              mountPath: /opt/bart-large-cnn
+      volumes:
+        - name: modeldir
+          emptyDir: {}
 ---
 apiVersion: v1
 kind: Service
@@ -26,9 +44,9 @@ metadata:
   name: pysummarize-service
 spec:
   ports:
-  - port: 443
-    protocol: TCP
-    targetPort: 5443
+    - port: 443
+      protocol: TCP
+      targetPort: 5443
   selector:
     app: pysummarize
   type: ClusterIP
@@ -41,7 +59,7 @@ spec:
   port:
     targetPort: 5443
   tls:
-    termination: passthrough 
+    termination: passthrough
     insecureEdgeTerminationPolicy: Redirect
   wildcardPolicy: None
   to:
