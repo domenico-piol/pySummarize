@@ -25,5 +25,6 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
+          dockerfile: Containerfile
           push: true
           tags: domenicopiol/pysummarize:latest,domenicopiol/pysummarize:${{ github.sha }}
