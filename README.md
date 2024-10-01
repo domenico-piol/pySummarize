@@ -5,13 +5,16 @@ The runnable application is containerized and available on [docker.io](https://h
 
     https://pysummarize-runtime.example.net:443/summarize/"ARTICLE TO SUMMARIZE"
 
-Be aware, due to its size this Git repo does NOT contain the pre-built model itself. That can be obtained from Huggingface using:
+Be aware, due to its size this Git repo does NOT contain the pre-built model itself. That can be obtained from Huggingface e.g. using:
 
     wget https://huggingface.co/facebook/bart-large-cnn/resolve/main/pytorch_model.bin
 
-Place it in the `fb-bart-large-cnn` folder.
+For local usage, place it e.g. in the `fb-bart-large-cnn` (or any other) folder and configure the Python app accordingly.
+
+However, during runtime on OpenShift (or any k8s flavor), the model will be obtained via a init-container!
 
 ## How-to run
+### Locally with Podman
 You can run the application locally by simply:
 
     python summarize.py
@@ -29,6 +32,21 @@ Run the container in Podman:
     podman run --name pysummarize -it -d -p 443:5443 mydomain/pysummarize
 
 or in OpenShift by using the deployment descriptor in th e`k8s`folder.`
+
+### On OpenShift (or any k8s flavor)
+For deploying the demo-app to OpenShift, use the `k8s/summarize.yaml` deployment descriptor.
+
+    oc deploy -f k8s/summarize.yaml
+
+The deployment will use an init-container for obtaining the model from Huggingface using the huggingface-cli.
+The init-container starts the model-downloader script `dl.sh` which expects some parameters:
+
+    -m the model
+    -d the directory where to place the model
+    -f a list of files to download
+
+The `summarize.yaml` descriptor file contains already a comprehensive working example.
+
 
 ## Example
 Let's take an announcement made by Red Hat some time back:
