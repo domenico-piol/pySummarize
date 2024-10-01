@@ -9,7 +9,7 @@ Be aware, due to its size this Git repo does NOT contain the pre-built model its
 
     wget https://huggingface.co/facebook/bart-large-cnn/resolve/main/pytorch_model.bin
 
-For local usage, place it e.g. in the `fb-bart-large-cnn` (or any other) folder and configure the Python app accordingly.
+For local usage, place it e.g. in the `fb-bart-large-cnn` (or any other) folder and configure the Python app accordingly using the `MODEL_LOCATION` environment variable.
 
 However, during runtime on OpenShift (or any k8s flavor), the model will be obtained via a init-container!
 
@@ -29,7 +29,7 @@ For creating the container image, use:
 
 Run the container in Podman:
 
-    podman run --name pysummarize -it -d -p 443:5443 mydomain/pysummarize
+    podman run --name pysummarize -it -d -p 443:5443 -v ./fb-bart-large-cnn:/opt/bart-large-cnn -e MODEL_LOCATION=/opt/bart-large-cnn domenicopiol/pysummarize
 
 or in OpenShift by using the deployment descriptor in th e`k8s`folder.`
 

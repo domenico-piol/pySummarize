@@ -16,6 +16,7 @@ spec:
       initContainers:
         - name: hf-model-dl
           image: docker.io/domenicopiol/hf-model-dl:latest
+          imagePullPolicy: Always
           command:
             [
               "sh",
@@ -29,6 +30,8 @@ spec:
         - name: pysummarize
           image: docker.io/domenicopiol/pysummarize:latest
           imagePullPolicy: Always
+          environment:
+            MODEL_LOCATION: '/opt/bart-large-cnn'
           ports:
             - containerPort: 5443
           volumeMounts:
