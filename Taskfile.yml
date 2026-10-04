@@ -1,0 +1,37 @@
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+
+version: '3'
+
+vars:
+    GREETING: pySummarize
+    IMAGE_VERSION: v1
+
+tasks:
+    default:
+        desc: Print a greeting message
+        cmds:
+            - echo "Taskfile for {{.GREETING}}"
+        silent: true
+    
+    create-image:
+        cmds:
+            - podman build -t domenico/pysummarize:{{.IMAGE_VERSION}} .
+        silent: true
+    
+    stop:
+        cmds:
+            - podman stop pysummarize
+            - echo
+            - podman ps
+        silent: true
+            
+    start:
+        cmds:
+            - podman run -d --rm --name pysummarize localhost/domenico/pysummarize:{{.IMAGE_VERSION}}
+            - echo
+            - podman ps
+        silent: true
+    
+    cleanall:
+        cmds:
+            - podman rmi --all
